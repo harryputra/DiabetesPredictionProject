@@ -8,10 +8,23 @@ Original file is located at
 
 # Diabetes Prediction Project
 
-**Proyek ini bertujuan untuk memprediksi kemungkinan seseorang menderita diabetes berdasarkan data medis.**
+Proyek ini bertujuan untuk memprediksi kemungkinan seseorang menderita diabetes berdasarkan data medis seperti BMI, usia, dan riwayat kesehatan. Dataset yang digunakan adalah **Diabetes Prediction Dataset** dari Kaggle. Dataset ini terdiri dari 100.000 sampel data pasien dengan 9 fitur, termasuk variabel target `diabetes` (0: Tidak diabetes, 1: Diabetes)..
+
+**Import Libraries**
+
+Library dan modul yang digunakan :
+
+Manipulasi dan eksplorasi data (pandas, numpy).
+
+Visualisasi (matplotlib.pyplot, seaborn).
+
+Preprocessing data (LabelEncoder, StandardScaler).
+
+Modeling (LogisticRegression)
+
+Evaluasi model (accuracy_score, classification_report, confusion_matrix).
 """
 
-# Import Libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,6 +34,64 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
+"""Berikut adalah dokumentasi untuk setiap library dan modul yang diimpor :
+
+1. import pandas as pd
+Fungsi: pandas adalah library utama untuk manipulasi dan analisis data. Library ini memungkinkan kita untuk membaca, menulis, dan memproses data dalam bentuk tabel (DataFrame).
+Penggunaan:
+Membaca dataset dalam berbagai format seperti CSV, Excel, SQL, dll.
+Melakukan manipulasi data seperti filtering, merging, reshaping, dan analisis statistik dasar.
+2. import numpy as np
+Fungsi: numpy digunakan untuk komputasi numerik. Library ini menyediakan fungsi untuk operasi matematika pada array multidimensi.
+Penggunaan:
+Digunakan dalam operasi matematis seperti mean, standard deviation, atau fungsi elemen-matriks.
+Membuat array atau vektor untuk keperluan komputasi numerik.
+3. import matplotlib.pyplot as plt
+Fungsi: matplotlib.pyplot adalah library untuk membuat visualisasi grafik.
+Penggunaan:
+Membuat plot seperti line chart, bar chart, scatter plot, histogram, dll.
+Digunakan untuk memvisualisasikan distribusi data atau hubungan antar fitur.
+4. import seaborn as sns
+Fungsi: seaborn adalah library visualisasi data berbasis matplotlib yang menyediakan gaya grafik yang lebih modern dan mendukung analisis statistik.
+Penggunaan:
+Membuat grafik seperti heatmap, boxplot, pairplot, atau histogram dengan visualisasi yang lebih rapi.
+Sangat berguna untuk analisis data eksploratif (EDA).
+5. from sklearn.model_selection import train_test_split
+Fungsi: Modul ini digunakan untuk membagi dataset menjadi dua bagian:
+Training set: Untuk melatih model.
+Testing set: Untuk mengevaluasi kinerja model.
+Penggunaan:
+Memastikan data yang digunakan untuk evaluasi model tidak overlap dengan data training.
+Membantu dalam validasi model untuk menghindari overfitting.
+6. from sklearn.preprocessing import LabelEncoder, StandardScaler
+Fungsi: Modul preprocessing menyediakan fungsi untuk transformasi data sebelum digunakan oleh model machine learning.
+LabelEncoder:
+Mengubah data kategorikal menjadi nilai numerik.
+Contoh: Kolom gender dengan nilai "Male" dan "Female" akan diubah menjadi 1 dan 0.
+StandardScaler:
+Melakukan normalisasi atau standarisasi data numerik sehingga memiliki distribusi dengan rata-rata 0 dan standar deviasi 1.
+Berguna untuk fitur numerik yang memiliki skala berbeda.
+7. from sklearn.linear_model import LogisticRegression
+Fungsi:
+LogisticRegression adalah algoritma machine learning untuk masalah klasifikasi biner (dua kelas) atau multikelas.
+Model ini menggunakan persamaan logistik untuk memprediksi probabilitas suatu data termasuk dalam suatu kelas.
+Penggunaan:
+Membuat prediksi apakah seseorang menderita diabetes (1) atau tidak (0).
+Mudah diinterpretasikan dan cocok untuk masalah klasifikasi dengan data linier.
+8. from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+Fungsi: Modul metrics menyediakan fungsi untuk mengevaluasi kinerja model machine learning.
+accuracy_score:
+Menghitung persentase prediksi yang benar dibandingkan total data testing.
+classification_report:
+Menyediakan metrik evaluasi seperti precision, recall, dan F1-score untuk setiap kelas.
+Membantu memahami performa model dalam mendeteksi kelas tertentu.
+confusion_matrix:
+Menampilkan matriks yang menunjukkan jumlah prediksi benar dan salah untuk setiap kelas.
+Berguna untuk memahami di mana model melakukan kesalahan.
+
+Kode ini digunakan untuk mengunggah file API token kaggle.json ke lingkungan kerja Google Colab. File kaggle.json berisi informasi autentikasi yang diperlukan untuk mengakses API Kaggle, seperti mengunduh dataset atau melakukan pengelolaan kompetisi.
+"""
+
 # Upload data
 from google.colab import files
 files.upload()  # Upload file kaggle.json
@@ -28,6 +99,18 @@ files.upload()  # Upload file kaggle.json
 !mkdir ~/.kaggle
 !mv kaggle.json ~/.kaggle/
 !chmod 600 ~/.kaggle/kaggle.json
+
+"""Membuat Direktori untuk File Autentikasi
+Untuk menggunakan Kaggle API, saya perlu menyimpan file autentikasi kaggle.json di direktori default yang digunakan oleh Kaggle API. Langkah pertama adalah membuat direktori .kaggle.
+
+Memindahkan File kaggle.json ke Direktori .kaggle
+Setelah file kaggle.json berhasil diunggah, file tersebut dipindahkan ke direktori .kaggle agar dikenali oleh API Kaggle.
+
+Mengatur Izin File kaggle.json
+Langkah ini memastikan file kaggle.json hanya dapat diakses oleh saya, untuk alasan keamanan.
+
+Perintah !kaggle datasets download -d iammustafatz/diabetes-prediction-dataset digunakan untuk mengunduh dataset Diabetes Prediction Dataset dari Kaggle langsung ke direktori kerja di Google Colab
+"""
 
 !kaggle datasets download -d iammustafatz/diabetes-prediction-dataset
 
@@ -37,25 +120,68 @@ with zipfile.ZipFile('diabetes-prediction-dataset.zip', 'r') as zip_ref:
 
 !ls diabetes_dataset
 
-"""# Step 1: Data Loading"""
+"""# Step 1: Data Loading
+
+Memastikan bahwa dataset Diabetes Prediction Dataset berhasil dimuat ke dalam Python untuk analisis atau modeling lebih lanjut.
+"""
 
 print("Loading dataset...")
 df = pd.read_csv('diabetes_dataset/diabetes_prediction_dataset.csv')
 
-"""# Step 2: Data Understanding"""
+"""Perintah print("Loading dataset...") digunakan untuk memberikan notifikasi kepada pengguna bahwa proses pemuatan dataset sedang berlangsung, sehingga pengguna dapat memahami status eksekusi kode.
+
+Selanjutnya, perintah df = pd.read_csv('diabetes_dataset/diabetes_prediction_dataset.csv') digunakan untuk membaca file dataset dalam format CSV ke dalam sebuah DataFrame bernama df menggunakan library pandas. DataFrame ini merupakan struktur data yang memungkinkan analisis dan manipulasi data dalam format tabel, sehingga dataset dapat dengan mudah diolah untuk proses eksplorasi, preprocessing, atau modeling.
+
+# Step 2: Data Understanding
+
+**print("\nDataset Information:")**
+Menampilkan teks "Dataset Information:" sebagai pemberitahuan kepada pengguna sebelum menampilkan detail dataset.
+
+**print(df.info())**
+Menampilkan informasi struktural dataset, seperti jumlah baris dan kolom, tipe data setiap kolom, serta jumlah nilai non-null di setiap kolom. Ini membantu dalam memahami apakah ada nilai yang hilang atau kolom dengan tipe data tertentu yang perlu diproses.
+
+**print("\nDataset Description:")**
+Menampilkan teks "Dataset Description:" sebagai pemberitahuan sebelum menampilkan statistik dataset.
+print(df.describe())
+
+Menampilkan statistik deskriptif dasar untuk kolom numerik dalam dataset, seperti rata-rata, standar deviasi, nilai minimum, maksimum, dan persentil. Ini berguna untuk memahami distribusi data numerik dalam dataset.
+"""
 
 print("\nDataset Information:")
 print(df.info())
 print("\nDataset Description:")
 print(df.describe())
 
-"""# Visualizing the distribution of target variable"""
+"""# Visualizing the distribution of target variable
+
+**sns.countplot(df['diabetes'])**
+Digunakan untuk membuat plot jumlah (count plot) dari kolom diabetes dalam dataset. Grafik ini menunjukkan distribusi jumlah data pada setiap kategori dalam variabel target diabetes (misalnya, 0 untuk tidak diabetes dan 1 untuk diabetes).
+plt.title("Distribution of Target
+
+**Variable (Diabetes)")**
+Menambahkan judul "Distribution of Target Variable (Diabetes)" pada grafik untuk menjelaskan isi visualisasi.
+
+**plt.show()**
+Menampilkan grafik hasil visualisasi di konsol atau notebook. Grafik ini membantu memahami proporsi data antara kelas diabetes dan non-diabetes.
+"""
 
 sns.countplot(df['diabetes'])
 plt.title("Distribution of Target Variable (Diabetes)")
 plt.show()
 
-"""# Visualizing numerical features"""
+"""# Visualizing numerical features
+
+**df.hist(figsize=(12, 10), bins=20**
+Membuat histogram untuk semua kolom numerik dalam dataset df. Histogram digunakan untuk menunjukkan distribusi nilai dalam setiap kolom numerik.
+figsize=(12, 10): Mengatur ukuran gambar histogram agar lebih besar (12 unit lebar dan 10 unit tinggi).
+bins=20: Menentukan jumlah kotak (bins) dalam histogram untuk setiap variabel numerik. Semakin banyak bins, semakin rinci distribusinya.
+
+**plt.tight_layout()**
+Memastikan tata letak plot rapi dan tidak saling tumpang tindih.
+
+**plt.show()**
+Menampilkan histogram untuk semua kolom numerik di dataset dalam satu gambar. Histogram ini membantu memahami distribusi data setiap kolom, misalnya apakah data miring, seragam, atau berdistribusi normal.
+"""
 
 df.hist(figsize=(12, 10), bins=20)
 plt.tight_layout()
@@ -65,47 +191,206 @@ plt.show()
 
 print("\nPreparing the data...")
 
-"""# Encoding categorical variables"""
+"""# Encoding categorical variables
+
+Perintah untuk mempersiapkan data kategorikal agar dapat digunakan dalam model machine learning, karena sebagian besar algoritma hanya dapat bekerja dengan data numerik.
+
+**le = LabelEncoder()**
+Membuat objek LabelEncoder dari library sklearn. Objek ini digunakan untuk mengonversi data kategorikal menjadi nilai numerik.
+
+df['gender'] = le.fit_transform(df['gender'])
+**teks tebal**
+Mengonversi kolom gender yang berisi data kategorikal seperti "Female" dan "Male" menjadi nilai numerik.
+Nilai "Female" dikodekan menjadi 0, dan "Male" menjadi 1.
+fit_transform:
+fit: Mempelajari label unik dalam kolom gender.
+transform: Mengonversi setiap nilai berdasarkan label yang dipelajari.
+
+**df['smoking_history'] = le.fit_transform(df['smoking_history'])**
+Mengonversi kolom smoking_history yang berisi data kategorikal seperti "never", "current", "former" menjadi nilai numerik.
+Setiap kategori dalam kolom akan diubah menjadi angka unik, misalnya "never" menjadi 0, "current" menjadi 1, dan sebagainya.
+"""
 
 le = LabelEncoder()
 df['gender'] = le.fit_transform(df['gender'])  # Female -> 0, Male -> 1
 df['smoking_history'] = le.fit_transform(df['smoking_history'])  # Encode smoking history
 
-"""# Normalizing numerical features"""
+"""# Normalizing numerical features
+
+scaler = StandardScaler()
+
+Membuat objek StandardScaler dari library sklearn.
+StandardScaler digunakan untuk melakukan normalisasi/standarisasi data numerik dengan cara mengubah nilai setiap fitur sehingga memiliki:
+Rata-rata (mean): 0
+Standar deviasi (std): 1
+
+numerical_features = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
+
+Mendefinisikan daftar kolom numerik dalam dataset yang akan dinormalisasi, yaitu:
+age: Usia pasien.
+bmi: Indeks massa tubuh.
+HbA1c_level: Level hemoglobin A1c.
+blood_glucose_level: Level gula darah.
+
+df[numerical_features] = scaler.fit_transform(df[numerical_features])
+
+fit_transform:
+fit: Menghitung rata-rata dan standar deviasi untuk setiap fitur berdasarkan data yang diberikan.
+transform: Menggunakan nilai rata-rata dan standar deviasi yang dihitung untuk menstandarkan setiap nilai fitur.
+Kolom numerik dalam DataFrame df diubah nilainya menjadi data yang telah distandarkan (z-score).
+"""
 
 scaler = StandardScaler()
 numerical_features = ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level']
 df[numerical_features] = scaler.fit_transform(df[numerical_features])
 
+"""# Splitting the data into training and testing sets
+
+X = df.drop('diabetes', axis=1)
+
+Membuat DataFrame X yang berisi semua fitur (variabel independen) dari dataset, kecuali kolom target diabetes.
+drop('diabetes', axis=1): Menghapus kolom diabetes dari DataFrame dan menyimpan sisanya di variabel X.
+
+y = df['diabetes']
+
+Membuat Series y yang berisi variabel target diabetes (variabel dependen), yang akan digunakan sebagai label untuk model machine learning.
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+Membagi dataset menjadi training set dan testing set:
+X_train: Fitur untuk melatih model.
+X_test: Fitur untuk menguji model.
+y_train: Label target untuk melatih model.
+y_test: Label target untuk menguji model.
+test_size=0.2: 20% data digunakan sebagai testing set, sedangkan 80% sisanya digunakan sebagai training set.
+random_state=42: Menentukan seed untuk pengacakan data agar hasil pembagian dataset konsisten setiap kali kode dijalankan.
 """
-# Splitting the data into training and testing sets"""
 
 X = df.drop('diabetes', axis=1)
 y = df['diabetes']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-"""# Step 4: Modeling"""
+"""# Step 4: Modeling
+
+melatih model Logistic Regression sehingga dapat memprediksi nilai target (diabetes atau tidak diabetes) berdasarkan fitur input. Setelah pelatihan selesai, model siap digunakan untuk membuat prediksi pada data testing atau data baru.
+
+print("\nTraining the model...")
+
+Menampilkan pesan di konsol untuk memberi tahu bahwa proses pelatihan model sedang berlangsung. Pesan ini membantu pengguna memahami tahap eksekusi program.
+
+model = LogisticRegression()
+
+Membuat objek model Logistic Regression dari library sklearn.
+Logistic Regression adalah algoritma machine learning untuk klasifikasi biner atau multikelas yang menggunakan regresi logistik untuk memprediksi probabilitas sebuah data termasuk dalam suatu kelas.
+
+model.fit(X_train, y_train)
+
+Melatih model Logistic Regression menggunakan training set:
+X_train: Data fitur (independen) untuk pelatihan.
+y_train: Data target (label) untuk pelatihan.
+Model akan belajar pola hubungan antara fitur di X_train dan label di y_train, yang kemudian digunakan untuk membuat prediksi.
+"""
 
 print("\nTraining the model...")
 model = LogisticRegression()
 model.fit(X_train, y_train)
 
-"""# Step 5: Evaluation"""
+"""# Step 5: Evaluation
+
+menghitung dan menampilkan tingkat akurasi model pada data testing. Akurasi memberikan gambaran seberapa baik model memprediksi label dengan benar. Nilai akurasi yang tinggi menunjukkan performa model yang baik, tetapi perlu diperiksa bersama metrik lain seperti precision, recall, dan F1-score untuk memastikan hasil yang lebih menyeluruh.
+
+print("\nEvaluating the model...")
+
+Menampilkan pesan di konsol untuk memberi tahu bahwa proses evaluasi model sedang berlangsung. Ini membantu pengguna memahami bahwa langkah berikutnya adalah mengevaluasi kinerja model.
+
+y_pred = model.predict(X_test)
+
+Menggunakan model Logistic Regression yang telah dilatih untuk memprediksi nilai target (label) pada data testing (X_test).
+predict: Menghasilkan prediksi untuk setiap baris data di X_test. Hasilnya adalah array y_pred yang berisi prediksi kelas (misalnya 0 untuk tidak diabetes dan 1 untuk diabetes) untuk setiap data testing.
+"""
 
 print("\nEvaluating the model...")
 y_pred = model.predict(X_test)
 
-"""# Accuracy"""
+"""# Accuracy
+
+memberikan evaluasi komprehensif dari performa model pada data testing, melampaui sekadar akurasi. Ini membantu memahami bagaimana model menangani masing-masing kelas dan apakah ada ketidakseimbangan performa antar kelas.
+
+accuracy = accuracy_score(y_test, y_pred)
+
+Menghitung akurasi model menggunakan fungsi accuracy_score dari sklearn.metrics.
+y_test: Label sebenarnya dari data testing.
+y_pred: Label yang diprediksi oleh model.
+Akurasi dihitung sebagai:
+
+Akurasi =Jumlah Prediksi Benar/Total Jumlah Data
+​
+
+Akurasi menunjukkan persentase prediksi yang benar dibandingkan dengan total data testing.
+
+print(f"Accuracy: {accuracy * 100:.2f}%")
+
+Menampilkan hasil akurasi dalam bentuk persentase dengan format dua angka desimal.
+accuracy * 100: Mengonversi akurasi (dalam bentuk proporsi, misalnya 0.85) menjadi persentase (85.00%).
+{:.2f}: Memformat angka menjadi dua angka desimal.
+"""
 
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 
-"""# Classification report"""
+"""# Classification report
+
+print("\nClassification Report:")
+
+Menampilkan pesan di konsol untuk memberi tahu bahwa laporan klasifikasi akan ditampilkan. Ini membantu pengguna memahami konteks hasil yang akan dioutput.
+
+print(classification_report(y_test, y_pred))
+
+classification_report: Fungsi dari sklearn.metrics yang menampilkan laporan evaluasi model berdasarkan beberapa metrik, yaitu:
+Precision: Proporsi prediksi positif yang benar dibandingkan dengan total prediksi positif.
+Recall (Sensitivity): Proporsi data positif yang berhasil dideteksi dengan benar oleh model.
+F1-Score: Rata-rata harmonis antara precision dan recall.
+Support: Jumlah sampel aktual untuk setiap kelas dalam data testing.
+y_test: Label sebenarnya dari data testing.
+y_pred: Label yang diprediksi oleh model.
+"""
 
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 
-"""# Confusion Matrix"""
+"""# Confusion Matrix
+
+1. cm = confusion_matrix(y_test, y_pred)
+Fungsi: Menghitung confusion matrix menggunakan fungsi dari sklearn.metrics.
+Confusion Matrix:
+Menyajikan jumlah prediksi benar dan salah untuk setiap kelas dalam bentuk matriks.
+Baris menunjukkan kelas aktual, dan kolom menunjukkan kelas yang diprediksi.
+Format:
+csharp
+Salin kode
+[TP  FP]
+[FN  TN]
+TP (True Positive): Prediksi benar untuk kelas positif.
+FP (False Positive): Prediksi salah untuk kelas positif.
+FN (False Negative): Prediksi salah untuk kelas negatif.
+TN (True Negative): Prediksi benar untuk kelas negatif.
+2. sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+Membuat visualisasi heatmap untuk confusion matrix menggunakan Seaborn.
+cm: Matriks yang akan divisualisasikan.
+annot=True: Menampilkan nilai numerik dalam setiap sel matriks.
+fmt='d': Menampilkan angka dalam format integer (desimal).
+cmap='Blues': Menggunakan palet warna biru untuk heatmap.
+3. plt.xlabel('Predicted')
+Menambahkan label "Predicted" pada sumbu X untuk menunjukkan bahwa kolom matriks mewakili prediksi model.
+4. plt.ylabel('Actual')
+Menambahkan label "Actual" pada sumbu Y untuk menunjukkan bahwa baris matriks mewakili nilai sebenarnya.
+5. plt.title('Confusion Matrix')
+Menambahkan judul "Confusion Matrix" pada plot untuk menjelaskan isi visualisasi.
+6. plt.show()
+Menampilkan heatmap confusion matrix sebagai grafik.
+7. print("\nProject Completed Successfully!")
+Menampilkan pesan akhir di konsol sebagai pemberitahuan bahwa seluruh langkah dalam proyek telah selesai dijalankan.
+"""
 
 cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
